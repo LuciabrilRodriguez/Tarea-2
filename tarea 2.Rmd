@@ -1,0 +1,164 @@
+---
+title: "Tarea 2"
+author: "Luciabril Rodriguez"
+date: "9 de mayo de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## EJERCICIO 1
+
+## Parte 1
+
+```{r, echo= TRUE}
+library(tidyverse)
+dato_emision<- gather(emisiones, key= fuente, value = emision, -AÑO)
+
+filter(dato_emision, fuente!="TOTAL", fuente!="I_E", fuente!= "S_C")%>%
+  group_by(fuente)%>%
+  summarise(maxfuente= max(emision))
+```
+La fuente de mayor emision es Q_B que pertenece a la quema de biomasa
+
+## Parte 2
+```{r, echo= TRUE}
+library(tidyverse)
+filter(dato_emision, emision == 88311)
+```
+El año en que sucedio la mayor emision de quema de biomasa fue en el 2016
+
+## Parte 3
+```{r, echo= TRUE}
+library(tidyverse)
+filter(dato_emision, fuente!="TOTAL", fuente!="I_E", fuente!= "S_C", emision!= "NA")%>%
+  group_by(fuente)%>%
+  summarise(M= mean(as.numeric(dato_emision$emision)))%>%
+  top_media(5)
+
+```
+Las cinco medias de emision mas grandes corresponden a las siguientes fuentes: Quema de biomasa(Q_B), Búnkers internacionales(BI), Industrial (I), Transporte (T) y Centrales eléctricas de servicio público (CE_SP) .
+
+## Parte 4
+
+```{r, echo= FALSE}
+cap1 <- "Figura 1: Gráfico de dispersión que intenta explicar las emisiones de CO2 a traves de los años. Se puede distinguir como en el caso de las emisiones por quema de biomasa, transporte e industrias hay una tendecia al aumento de las mismas en el correr de los años. En el caso del resto de las fuentes estudiadas no existe una relacion que se pueda distinguir por este medio. "
+```
+
+```{r, echo= TRUE}
+library(tidyverse)
+library(ggplot2)
+filter(dato_emision, fuente== "Q_B" | fuente == "BI" | fuente== "I"| fuente== "T"| fuente== "CE_SP")%>%
+  ggplot(aes(AÑO, emision))+
+  geom_point()+
+  geom_line()+
+  facet_wrap(~fuente)+
+  xlab("Año de estudio")+
+  ylab("Emisión de CO2")
+```
+
+## Parte 5
+```{r, echo= TRUE}
+library(tidyverse)
+library(ggplot2)
+ggplot(filter(dato_emision, fuente== "Q_B" | fuente == "BI" | fuente== "I"| fuente== "T"| fuente== "CE_SP"), aes(fuente, emision))+
+  geom_boxplot()
+```
+
+
+## EJERCICIO 2
+
+# Primera pregunta
+¿Cuál fue el prestador que realiz? la maxima cantidad de prestaciones en el año 2016?
+
+```Parte 5
+```{r, echo= TRUE}
+library(tidyverse)
+A<-gastosmed%>%
+  group_by(Prestador)%>%
+  summarise(cant= n())
+A%>%
+  summarise(mayorprestador= max(cant))
+filter(A,cant==2297)
+
+```
+
+En el 2016 el centro asistencial CASMU fue la entidad que mas prestaciones realizo, 2297 en concreto.
+
+## Pregunta 2
+?La prestaci?n mas costosa fue realizada por el ambito p?blico o privado?
+
+```{r, echo= TRUE}
+library(tidyverse)
+gastosmed%>%
+  group_by(Prestador_tipo)%>%
+  summarise(MaximoImporte= max(Importe, na.rm = TRUE))
+```
+
+La prestacion que costo mas fue realizada por ASSE que es la administracion 
+de los servicios de salud del estado, es decir fue realizada por el ambito publico.
+
+## Pregunta 3
+?Cu?l es la prestacion que es mas requerida entre la poblaci?n de estudio, segun su sexo?
+
+```{r, echo= FALSE}
+cap4 <- "Figura 4: Gr?fico de barras que expone la cantidad de casos para cada una de las  prestaciones realizadas en el a?o 2016 por los sectores p?blicos y privado de Uruguay, explicado por el g?nero de cada uno de los pacientes. Claramente se aprecia como tanto para hombre como para mujeres la principal prestaci?n son las intervenciones por cateterismo izquierdo, aunque para los hombres existen muchos mas casos. "
+```
+
+```{r, echo= TRUE}
+library(tidyverse)
+library(ggplot2)
+ggplot(gastosmed, aes(Prestacion))+
+  geom_bar()+
+  coord_flip()+
+  facet_wrap(~Sexo)+
+  xlab("Tipo de prestaciones")+
+  ylab("Cantidad de casos")
+```
+En el caso de las mujeres la presatciones que mas se requieren son la hemodialisis y el procedimiento cardiologico de cateterismo izquierdo en adultos. En el caso de los hombre tambien comparten esta ultima prestacion  pero a mayor nivel ya que hay mayor cantidad de casos en hombres que en mujeres.
+
+## Pregunta 4
+¿Existe alguna relaciÓn entre el Importe destinado a las prestaciones y la edad de la poblaci?n de estudio, segun sus departamentos de residencia?
+
+```{r, echo= FALSE}
+cap5 <- "Figura 6 : Grafico de dispersion que intenta explicar el importe de dinero medido en pesos dedicado a cada una de las prestaciones mediante la edad de los pacientes, diferenciado por el departamente de residencia de los mismos. Se puede apreciar como Los departamentos que mas invierten en prestaciones son Montevideo y Canelones con un rango de edad muy amplio."
+```
+
+```{r, echo= TRUE}
+library(tidyverse)
+library(ggplot2)
+ggplot(gastosmed, aes(Edad_años, Importe))+
+  geom_point(alpha= 1/3)+
+  facet_wrap(~Departamento_residencia)+
+  xlab("Edad medida en años")+
+  ylab("Monto de pesos pagados por paciente en el a?o 2016")
+```
+
+Mediante el grafico no se puede afirmar que exista una relacion entre las dos variables mencionadas, lo que si se puede apreciar es como todos los departamentos tienen en comun que la mayor cantidad de prestaciones se da entre los 30 y 90 años de edad. Se destacan por encima de todos Montevideo y Canelones ya que son los que mayor importe destinan a las prestaciones y recorren un rango etario casi que total. Tambien se destaca Flores pero por ser el opuesto los ultimos dos departamentos mencionados, en este caso es el que menos gasta en prestaciones y a su vez la mayor?a de las prestaciones son destinadas a personas entre 50 y 80 a?os.
+
+## Pregunta 5
+¿Que departamento tiene mayor cantidad de prestaciones?
+
+```{r, echo= FALSE}
+cap6 <- "Figura 6 : Grafico de barras que expone la cantidad de prestaciones segun los departamentos de residencia de los pacientes en el año 2016. Se aprecia claramente como Montevideo es el que mayor cantidad de estas realiza posiblemente explicado porque es el departamento con mayor poblacion del pais ."
+```
+
+```{r, echo= TRUE}
+library(tidyverse)
+gastosmed%>%
+  group_by(Departamento_residencia)%>%
+  summarise(n=n())%>%
+  ggplot(aes(Departamento_residencia, n))+
+  geom_bar(stat="identity")+
+  coord_flip()+
+  xlab("Departamento de residencia del paciente")+
+  ylab("cantidad de prestaciones brindadas en 2016")
+```
+
+Intuitivamente en base a la pregunta anterior se podria haber especulado un resultado para esta pregunta, pero mediante el gr?fico podemos ver que el departamento con mayor cantidad de prestaciones es Montevideo con cerca de 11000 seguido de canelones con mas de 3000. El resto del pais se encuentra ubicado entre 0 y 1000 prestsaciones brindadas en el 2016.
+
+
+  
+
