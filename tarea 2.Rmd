@@ -12,16 +12,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ## EJERCICIO 1
 
 ## Parte 1
-
+NO ESTÁN LOS DATOS LEIDOS POR LO QUE EL DOCUMENTO NO ES REPRODUCIBLE (LO AGREGUÉ)
 ```{r, echo= TRUE}
 library(tidyverse)
+emisiones <- read.table('emisiones.csv', header=T, sep=',')
 dato_emision<- gather(emisiones, key= fuente, value = emision, -AÑO)
 
 filter(dato_emision, fuente!="TOTAL", fuente!="I_E", fuente!= "S_C")%>%
   group_by(fuente)%>%
   summarise(maxfuente= max(emision))
 ```
+
+
 La fuente de mayor emision es Q_B que pertenece a la quema de biomasa
+
+FALTA USAR ARRANGE PARA QUE QUEDEN ORDENADOS
 
 ## Parte 2
 ```{r, echo= TRUE}
@@ -29,6 +34,9 @@ library(tidyverse)
 filter(dato_emision, emision == 88311)
 ```
 El año en que sucedio la mayor emision de quema de biomasa fue en el 2016
+
+
+BIEN!!!
 
 ## Parte 3
 ```{r, echo= TRUE}
@@ -41,6 +49,8 @@ filter(dato_emision, fuente!="TOTAL", fuente!="I_E", fuente!= "S_C", emision!= "
 ```
 Las cinco medias de emision mas grandes corresponden a las siguientes fuentes: Quema de biomasa(Q_B), Búnkers internacionales(BI), Industrial (I), Transporte (T) y Centrales eléctricas de servicio público (CE_SP) .
 
+VER SOLUCION PARA SELECCIONAR MAS DE UN VALOR HAY QUE USAR %IN%
+LAS LIBRERIAS NO HAY QUE CARGARLAS EN CADA CHUNK
 ## Parte 4
 
 ```{r, echo= FALSE}
@@ -58,7 +68,7 @@ filter(dato_emision, fuente== "Q_B" | fuente == "BI" | fuente== "I"| fuente== "T
   xlab("Año de estudio")+
   ylab("Emisión de CO2")
 ```
-
+VER SOLUCION, FALTA AGREGAR LAS LINEAS
 ## Parte 5
 ```{r, echo= TRUE}
 library(tidyverse)
@@ -67,6 +77,7 @@ ggplot(filter(dato_emision, fuente== "Q_B" | fuente == "BI" | fuente== "I"| fuen
   geom_boxplot()
 ```
 
+VER SOLUCIÓN ESTE NO ES UN BOXPLOT
 
 ## EJERCICIO 2
 
@@ -76,6 +87,8 @@ ggplot(filter(dato_emision, fuente== "Q_B" | fuente == "BI" | fuente== "I"| fuen
 ```Parte 5
 ```{r, echo= TRUE}
 library(tidyverse)
+gastosmed <-  read.csv("gastomed.csv", header = TRUE, dec = ",",encoding="latin1") 
+
 A<-gastosmed%>%
   group_by(Prestador)%>%
   summarise(cant= n())
@@ -84,6 +97,8 @@ A%>%
 filter(A,cant==2297)
 
 ```
+NO SE PUEDE CORRER EL EJEMPLO PORQUE  gastosmed   NO ESTA LEIDO EN R.
+FUNDAMENTAL PARA REPRODUCIBILIDAD
 
 En el 2016 el centro asistencial CASMU fue la entidad que mas prestaciones realizo, 2297 en concreto.
 
@@ -96,6 +111,8 @@ gastosmed%>%
   group_by(Prestador_tipo)%>%
   summarise(MaximoImporte= max(Importe, na.rm = TRUE))
 ```
+
+BIEN!!
 
 La prestacion que costo mas fue realizada por ASSE que es la administracion 
 de los servicios de salud del estado, es decir fue realizada por el ambito publico.
@@ -119,6 +136,7 @@ ggplot(gastosmed, aes(Prestacion))+
 ```
 En el caso de las mujeres la presatciones que mas se requieren son la hemodialisis y el procedimiento cardiologico de cateterismo izquierdo en adultos. En el caso de los hombre tambien comparten esta ultima prestacion  pero a mayor nivel ya que hay mayor cantidad de casos en hombres que en mujeres.
 
+SERÍA BUENO ORDENAR LOS TIPOS DE PRESTACIONES POR CANTIDAD, DISMINUIR EL TAMAÑO DEL TEXO EN EL EJE Y 
 ## Pregunta 4
 ¿Existe alguna relaciÓn entre el Importe destinado a las prestaciones y la edad de la poblaci?n de estudio, segun sus departamentos de residencia?
 
@@ -137,6 +155,8 @@ ggplot(gastosmed, aes(Edad_años, Importe))+
 ```
 
 Mediante el grafico no se puede afirmar que exista una relacion entre las dos variables mencionadas, lo que si se puede apreciar es como todos los departamentos tienen en comun que la mayor cantidad de prestaciones se da entre los 30 y 90 años de edad. Se destacan por encima de todos Montevideo y Canelones ya que son los que mayor importe destinan a las prestaciones y recorren un rango etario casi que total. Tambien se destaca Flores pero por ser el opuesto los ultimos dos departamentos mencionados, en este caso es el que menos gasta en prestaciones y a su vez la mayor?a de las prestaciones son destinadas a personas entre 50 y 80 a?os.
+
+TAL VEZ SE PODRIĪA RESUMIR LA INFO DE MONTO EN PESOS EN VEZ DE PONER TODOS LOS VALORES
 
 ## Pregunta 5
 ¿Que departamento tiene mayor cantidad de prestaciones?
@@ -162,3 +182,4 @@ Intuitivamente en base a la pregunta anterior se podria haber especulado un resu
 
   
 
+BUEN TRABAJO, HAY QUE TRABAJAR UN POCO MÁS EN HACER EL DOCUMENTO REPRODUCIBLE Y ORDENAR LAS VISUALIZACIONES PARA FACILITAR EL ENTENDIMIENTO. PUNTOS 90/100
